@@ -10,9 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52e8f3853e7e3c84d989f8b0596699d3, type: 3}
-  m_Name: DefaultShip
+  m_Name: JammerShip
   m_EditorClassIdentifier: 
-  speed: 0.5
-  damage: 10
-  value: 100
-  attackType: 0
+  speed:
+    min: 0
+    max: 0
+  damage: 3
+  value: 200
+  difficulty: 2
