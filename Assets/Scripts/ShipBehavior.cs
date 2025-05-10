@@ -2,11 +2,22 @@ using UnityEngine;
 
 public class ShipBehavior : MonoBehaviour
 {
-    public ShipProperties myProperties;
+    private ShipProperties myProperties;
 
-    public bool isAlive = true;
+    float randomJammerVal;
 
-    public bool isArtileryCorrect(ShipProperties.ShellTypes artileryUsed)
+    void Update()
+    {
+        Movement();
+    }
+
+    void Movement(){
+        if (!gameObject.activeSelf) return;
+
+        transform.Translate(Vector3.down * Time.deltaTime);
+    }
+
+    public bool IsArtileryCorrect(ShipProperties.ShellTypes artileryUsed)
     {
         if (myProperties.difficulty == ShipProperties.Difficulties.JammerOnly ||
             myProperties.difficulty == ShipProperties.Difficulties.Basic)
@@ -21,9 +32,13 @@ public class ShipBehavior : MonoBehaviour
         if (myProperties.difficulty == ShipProperties.Difficulties.ShellOnly ||
             myProperties.difficulty == ShipProperties.Difficulties.Basic)
             return true;
-        if (myProperties.jammerValue > jammerValue - 2.5f && myProperties.jammerValue < jammerValue + 2.5f)
+        if (randomJammerVal > jammerValue - 2.5f && randomJammerVal < jammerValue + 2.5f)
             return true;
 
         return false;
+    }
+
+    public void SetShipProperties(ShipProperties properties){
+        randomJammerVal = properties.jammerValues.GetRandom();
     }
 }
