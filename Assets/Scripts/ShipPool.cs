@@ -1,10 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 public class ShipPool : MonoBehaviour
 {
-    private List<GameObject> pool = new List<GameObject>();
-    public GameObject easyShipPrefab;
+    private List<IPoolable> pool = new();
+    public GameObject shipPrefab;
     public static ShipPool instance;
 
     private void Awake()
@@ -24,8 +25,9 @@ public class ShipPool : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.A))
         {
-            GameObject obj = GetFromPool();
-            obj.SetActive(true);
+            IPoolable obj = GetFromPool();
+            obj.mainObject.SetActive(true);
+            obj.OnExitPool();
         }
     }
 
@@ -33,16 +35,19 @@ public class ShipPool : MonoBehaviour
     {
         for (int i = 0; i < poolSize; i++)
         {
-            pool.Add(easyShipPrefab);
-            easyShipPrefab.SetActive(false);
+            GameObject ship = Instantiate(shipPrefab, transform);
+            IPoolable poolable = ship.GetComponent<IPoolable>();
+            pool.Add(poolable);
+            poolable.OnEnterPool();
+            poolable.mainObject.SetActive(false);
         }
     }
 
-    public GameObject GetFromPool()
+    public IPoolable GetFromPool()
     {
         for (int i = 0; i < pool.Count; i++)
         {
-            if (!pool[i].activeInHierarchy)
+            if (!pool[i].mainObject.activeInHierarchy)
             {
                 return pool[i];
             }
@@ -51,8 +56,9 @@ public class ShipPool : MonoBehaviour
         return null;
     }
 
-    public void ReturnToPool(GameObject returningObj)
+    public void ReturnToPool(IPoolable returningObj)
     {
-        returningObj.SetActive(false);
+        returningObj.OnEnterPool();
+        returningObj.mainObject.SetActive(false);
     }
 }

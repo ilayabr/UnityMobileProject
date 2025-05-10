@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ShipBehavior : MonoBehaviour
+public class ShipBehavior : MonoBehaviour, IPoolable
 {
     private ShipProperties myProperties;
 
@@ -40,5 +40,16 @@ public class ShipBehavior : MonoBehaviour
 
     public void SetShipProperties(ShipProperties properties){
         randomJammerVal = properties.jammerValues.GetRandom();
+    }
+
+    public GameObject mainObject { get => gameObject; }
+
+    public void OnEnterPool()
+    {
+        
+    }
+
+    public void OnExitPool()
+    {
     }
 }
