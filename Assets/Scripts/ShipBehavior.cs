@@ -15,6 +15,10 @@ public class ShipBehavior : MonoBehaviour, IPoolable
         if (!gameObject.activeSelf) return;
 
         transform.Translate(Vector3.down * Time.deltaTime);
+        if (transform.position.y < -5f)
+        {
+            GameManager.instance.shipPool.ReturnToPool(this);
+        }
     }
 
     public bool IsArtileryCorrect(ShipProperties.ShellTypes artileryUsed)
