@@ -24,5 +24,10 @@ public class ShipProperties : ScriptableObject
     }
     public ShellTypes shellType;
 
-    public float jammerValue = _jammerValues.GetRandom();
+    public float jammerValue;
+
+    void OnEnable()
+    {
+        jammerValue = _jammerValues.GetRandom();
+    }
 }
