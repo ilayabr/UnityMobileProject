@@ -8,6 +8,8 @@ public class ShipProperties : ScriptableObject
     public float value = 100f;
     public Range jammerValues = new Range(30f, 60f); 
 
+    public Sprite sprite;
+
     public enum Difficulties{
         Basic,
         ShellOnly,
@@ -22,5 +24,4 @@ public class ShipProperties : ScriptableObject
         AP,
         HEAT
     }
-    public ShellTypes shellType;
 }

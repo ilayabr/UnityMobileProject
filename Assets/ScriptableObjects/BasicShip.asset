@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: BasicShip
   m_EditorClassIdentifier: 
   speed:
-    min: 0
-    max: 0
+    min: 0.5
+    max: 1.5
   damage: 3
   value: 100
-  attackType: 0
+  jammerValues:
+    min: 30
+    max: 60
+  sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  difficulty: 0

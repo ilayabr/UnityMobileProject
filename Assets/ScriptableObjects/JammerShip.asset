@@ -17,4 +17,8 @@ MonoBehaviour:
     max: 0
   damage: 3
   value: 200
+  jammerValues:
+    min: 30
+    max: 60
   difficulty: 2
+  shellType: 0

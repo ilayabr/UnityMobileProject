@@ -1,10 +1,16 @@
 using UnityEngine;
 
-public class ShipBehavior : MonoBehaviour, IPoolable
+public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
 {
     private ShipProperties myProperties;
 
-    float randomJammerVal;
+    [SerializeField] private SpriteRenderer sr;
+
+    private float randomJammerVal;
+
+    private float speed = 1;
+
+    private ShipProperties.ShellTypes shellType;
 
     void Update()
     {
@@ -12,9 +18,9 @@ public class ShipBehavior : MonoBehaviour, IPoolable
     }
 
     void Movement(){
-        if (!gameObject.activeSelf) return;
+        if (!gameObject.activeInHierarchy) return;
 
-        transform.Translate(Vector3.down * Time.deltaTime);
+        transform.Translate(Vector3.down * Time.deltaTime * speed);
         if (transform.position.y < -5f)
         {
             GameManager.instance.shipPool.ReturnToPool(this);
@@ -26,7 +32,7 @@ public class ShipBehavior : MonoBehaviour, IPoolable
         if (myProperties.difficulty == ShipProperties.Difficulties.JammerOnly ||
             myProperties.difficulty == ShipProperties.Difficulties.Basic)
             return true;
-        if (myProperties.shellType == artileryUsed)
+        if (shellType == artileryUsed)
             return true;
         return false;
     }
@@ -44,6 +50,9 @@ public class ShipBehavior : MonoBehaviour, IPoolable
 
     public void SetShipProperties(ShipProperties properties){
         randomJammerVal = properties.jammerValues.GetRandom();
+        sr.sprite = properties.sprite;
+        speed = properties.speed.GetRandom();
+        shellType = (ShipProperties.ShellTypes)Random.Range(0, System.Enum.GetValues(typeof(ShipProperties.ShellTypes)).Length);
     }
 
     public GameObject mainObject { get => gameObject; }
@@ -55,5 +64,14 @@ public class ShipBehavior : MonoBehaviour, IPoolable
 
     public void OnExitPool()
     {
+        var pos = transform.position;
+        pos.x = Random.Range(-8f, 8f);
+        pos.y = 5;
+        transform.position = pos;
+    }
+
+    public void OnHit()
+    {
+        GameManager.instance.shipPool.ReturnToPool(this);
     }
 }

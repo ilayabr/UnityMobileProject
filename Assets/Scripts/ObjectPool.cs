@@ -7,19 +7,11 @@ public class ObjectPool : MonoBehaviour
     private List<IPoolable> pool = new();
     public GameObject prefab;
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            ActivateFromPool();
-        }
-    }
-
     public void InitializePool(int poolSize = 10)
     {
         for (int i = 0; i < poolSize; i++)
         {
-            GameObject obj = Instantiate(prefab, transform);
+            GameObject obj = Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
             IPoolable poolable = obj.GetComponent<IPoolable>();
             pool.Add(poolable);
             poolable.OnEnterPool();
@@ -31,12 +23,11 @@ public class ObjectPool : MonoBehaviour
     {
         for (int i = 0; i < pool.Count; i++)
         {
-            if (!pool[i].mainObject.activeInHierarchy)
-            {
-                pool[i].mainObject.SetActive(true);
-                pool[i].OnExitPool();
-                return pool[i].mainObject;
-            }
+            if (pool[i].mainObject.activeInHierarchy) continue;
+
+            pool[i].mainObject.SetActive(true);
+            pool[i].OnExitPool();
+            return pool[i].mainObject;
         }
 
         return null;
@@ -44,7 +35,9 @@ public class ObjectPool : MonoBehaviour
 
     public void ReturnToPool(IPoolable returningObj)
     {
-        returningObj.OnEnterPool();
+        if (!returningObj.mainObject.activeInHierarchy) return;
+
         returningObj.mainObject.SetActive(false);
+        returningObj.OnEnterPool();
     }
 }
