@@ -7,12 +7,13 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    public ShipProperties basicShipProperties;
-    public ShipProperties ShellShipProperties;
-    public ShipProperties JammerShipProperties;
-    public ShipProperties ShellAndJammerShipProperties;
+    [SerializeField] private ShipProperties basicShipProperties;
+    [SerializeField] private ShipProperties ShellShipProperties;
+    [SerializeField] private ShipProperties JammerShipProperties;
+    [SerializeField] private ShipProperties ShellAndJammerShipProperties;
     
     [FormerlySerializedAs("objectPool")] public ObjectPool shipPool;
+    [SerializeField] private GameObject shipPrefab;
 
     private void Awake()
     {
@@ -24,7 +25,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        shipPool.InitializePool(20);
+        shipPool.InitializePool(shipPrefab, 20);
         StartCoroutine(SpawnShips());
     }
 
@@ -50,6 +51,9 @@ public class GameManager : MonoBehaviour
         shipBehavior.SetShipProperties(basicShipProperties);
     }
     
+    /// <summary>
+    /// Creates a raycast when clicking the left mouse button and if an object is found and has the 'IHitable' interface it will call its 'OnHit()' method
+    /// </summary>
     void ClickHandler(){
         if (!Input.GetMouseButtonDown(0)) return;
 

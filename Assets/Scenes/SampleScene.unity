@@ -153,6 +153,7 @@ MonoBehaviour:
   JammerShipProperties: {fileID: 11400000, guid: b4e7f0f687478994385ecaccfe2bb5ef, type: 2}
   ShellAndJammerShipProperties: {fileID: 11400000, guid: dc670f49caa5df74bb0b2ed4396c6990, type: 2}
   shipPool: {fileID: 1249356382}
+  shipPrefab: {fileID: 5133231449048930697, guid: 57d6156f212a96e418543550d48687a5, type: 3}
 --- !u!4 &51815002
 Transform:
   m_ObjectHideFlags: 0
@@ -418,7 +419,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba86123292063c3439ac72469ae3564f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 5133231449048930697, guid: 57d6156f212a96e418543550d48687a5, type: 3}
 --- !u!4 &1249356383
 Transform:
   m_ObjectHideFlags: 0

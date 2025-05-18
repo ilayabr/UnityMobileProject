@@ -2,6 +2,9 @@ using System;
 using System.Globalization;
 using UnityEngine;
 
+/// <summary>
+/// A class to define a range between 2 floating point values
+/// </summary>
 [System.Serializable]
 public struct Range : IEquatable<Range>, IFormattable
 {
@@ -9,7 +12,10 @@ public struct Range : IEquatable<Range>, IFormattable
     public float max;
     public Range(float _min, float _max) => (min, max) = (_min, _max);
 
-    public static readonly Range range01 = new Range(0f, 1f);
+    /// <summary>
+    /// a range between 0 and 1
+    /// </summary>
+    public static readonly Range r01 = new Range(0f, 1f);
 
     public bool Equals(Range other) => this.min.Equals(other.min) && this.max.Equals(other.max);
 

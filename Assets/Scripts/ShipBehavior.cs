@@ -12,6 +12,8 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
 
     private ShipProperties.ShellTypes shellType;
 
+    public GameObject mainObject { get => gameObject; }
+    
     void Update()
     {
         Movement();
@@ -53,9 +55,11 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         sr.sprite = properties.sprite;
         speed = properties.speed.GetRandom();
         shellType = (ShipProperties.ShellTypes)Random.Range(0, System.Enum.GetValues(typeof(ShipProperties.ShellTypes)).Length);
-    }
 
-    public GameObject mainObject { get => gameObject; }
+        myProperties = properties;
+
+        gameObject.name = $"{System.Enum.GetName(typeof(ShipProperties.Difficulties), myProperties.difficulty)} ship";
+    }
 
     public void OnEnterPool()
     {
@@ -68,6 +72,17 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         pos.x = Random.Range(-8f, 8f);
         pos.y = 5;
         transform.position = pos;
+
+        if (myProperties == null) return;
+
+        gameObject.name = $"{System.Enum.GetName(typeof(ShipProperties.Difficulties), myProperties.difficulty)} ship";
+    }
+
+    public void OnReturnedToPool()
+    {
+        if (myProperties == null) return;
+
+        gameObject.name = $"{System.Enum.GetName(typeof(ShipProperties.Difficulties), myProperties.difficulty)} ship (dead)";
     }
 
     public void OnHit()
