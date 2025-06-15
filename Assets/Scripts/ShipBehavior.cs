@@ -25,7 +25,7 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         transform.Translate(Vector3.down * Time.deltaTime * speed);
         if (transform.position.y < -5f)
         {
-            GameManager.instance.shipPool.ReturnToPool(this);
+            GameplayManager.Get().shipPool.ReturnToPool(this);
         }
     }
 
@@ -87,6 +87,6 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
 
     public void OnHit()
     {
-        GameManager.instance.shipPool.ReturnToPool(this);
+        GameplayManager.Get().shipPool.ReturnToPool(this);
     }
 }

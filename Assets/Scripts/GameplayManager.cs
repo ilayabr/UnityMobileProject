@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class GameManager : MonoBehaviour
+public class GameplayManager : Singleton<GameplayManager>
 {
-    public static GameManager instance;
-
     [SerializeField] private ShipProperties basicShipProperties;
     [SerializeField] private ShipProperties ShellShipProperties;
     [SerializeField] private ShipProperties JammerShipProperties;
@@ -14,14 +12,9 @@ public class GameManager : MonoBehaviour
     
     [FormerlySerializedAs("objectPool")] public ObjectPool shipPool;
     [SerializeField] private GameObject shipPrefab;
+    [SerializeField] private PauseMenu pauseMenu;
 
-    private void Awake()
-    {
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(gameObject);
-    }
+    protected override bool DontDestroyOnLoad => false;
 
     private void Start()
     {
@@ -55,7 +48,7 @@ public class GameManager : MonoBehaviour
     /// Creates a raycast when clicking the left mouse button and if an object is found and has the 'IHitable' interface it will call its 'OnHit()' method
     /// </summary>
     void ClickHandler(){
-        if (!Input.GetMouseButtonDown(0)) return;
+        if (!Input.GetMouseButtonDown(0) || pauseMenu.IsPaused) return;
 
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
