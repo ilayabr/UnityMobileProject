@@ -4,18 +4,37 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
     public SaveData currentSaveData;
+    private SettingsSave currentSettingsData;
+    public SettingsSave CurrentSettingsData
+    {
+        get => currentSettingsData;
+        set
+        {
+            currentSettingsData = value;
+            OnSavedSettingsChanged?.Invoke();
+        }
+    }
 
     public string gameSavesPath { get; private set; }
+
+    public event UnityAction OnGameSaved;
+    public event UnityAction OnGameLoaded;
+    public event UnityAction OnSettingsSaved;
+    public event UnityAction OnSettingsLoaded;
+    public event UnityAction OnSavedSettingsChanged;
 
     protected override void Awake()
     {
         base.Awake();
         gameSavesPath = Application.persistentDataPath + "/GameSaves";
+        currentSettingsData = new();
+        currentSettingsData.OnSettingsChanged += () => OnSavedSettingsChanged?.Invoke();
     }
 
     public void SaveData()
@@ -33,6 +52,8 @@ public class GameManager : Singleton<GameManager>
         var bytes = GetCameraView().EncodeToPNG();
 
         File.WriteAllBytes(Path.Combine(currentSavePath, "snapshot.png"), bytes);
+
+        OnGameSaved?.Invoke();
     }
 
     private Texture2D GetCameraView()
@@ -70,8 +91,10 @@ public class GameManager : Singleton<GameManager>
     public void LoadData(string saveName)
     {
         currentSaveData = GetSaveData(saveName);
+
+        OnGameLoaded?.Invoke();
     }
-    
+
     /// <summary>
     /// gets a game save and loads it into the current game save
     /// </summary>
@@ -79,6 +102,7 @@ public class GameManager : Singleton<GameManager>
     public void LoadData(ExtendedSaveData extendedSave)
     {
         currentSaveData = extendedSave.GetSaveData();
+        OnGameLoaded?.Invoke();
     }
 
     /// <summary>
@@ -139,4 +163,35 @@ public class GameManager : Singleton<GameManager>
         if (!Directory.Exists(gameSavesPath))
             Directory.CreateDirectory(gameSavesPath);
     }
+
+    public void SaveSettings()
+    {
+        CreateSaveDirectory();
+
+        string jsonData = JsonConvert.SerializeObject(CurrentSettingsData);
+
+        File.WriteAllText(Path.Combine(gameSavesPath, "Settings.json"), jsonData);
+
+        OnSettingsSaved?.Invoke();
+    }
+
+    public void LoadSettings()
+    {
+        CreateSaveDirectory();
+
+        string savePath = Path.Combine(gameSavesPath, "Settings.json");
+
+        if (!File.Exists(savePath))
+        {
+            OnSettingsLoaded?.Invoke();
+            return;
+        }
+
+        string json = File.ReadAllText(savePath);
+
+        currentSettingsData = JsonConvert.DeserializeObject<SettingsSave>(json);
+        
+        OnSettingsLoaded?.Invoke();
+    }
+    
 }
