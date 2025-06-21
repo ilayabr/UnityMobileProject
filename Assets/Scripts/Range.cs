@@ -38,4 +38,7 @@ public struct Range : IEquatable<Range>, IFormattable
     /// returns a random value between this ranges min and max values.
     /// </summary>
     public float GetRandom() => UnityEngine.Random.Range(min, max);
+    public float Clamp(float value) => Mathf.Clamp(value, min, max);
+    public float To01(float value) => value / max;
+    public float Evaluate(float value01) => min + value01 * (max - min);
 }
