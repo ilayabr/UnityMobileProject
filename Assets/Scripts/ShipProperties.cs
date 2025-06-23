@@ -6,22 +6,24 @@ public class ShipProperties : ScriptableObject
     public Range speed;
     public float damage = 10f;
     public float value = 100f;
-    public Range jammerValues = new Range(30f, 60f); 
+    public Range jammerValues = new Range(30f, 60f);
 
     public Sprite sprite;
 
-    public enum Difficulties{
+    public enum Difficulties
+    {
         Basic,
         ShellOnly,
         JammerOnly,
         ShellAndJammer
     }
+
     public Difficulties difficulty;
 
     public enum ShellTypes
     {
         HE,
         AP,
-        HEAT
+        AT
     }
 }

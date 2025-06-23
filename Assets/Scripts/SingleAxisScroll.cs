@@ -10,9 +10,8 @@ public class SingleAxisScroll : MonoBehaviour, IDragHandler
     [SerializeField] private bool isHorizontal = true;
     [SerializeField] private bool isVertical = true;
 
-    public void OnScroll()
+    public void OnScroll(Touch touch)
     {
-        var touch = Input.GetTouch(0);
         switch (touch.phase)
         {
             case TouchPhase.Moved:
@@ -34,6 +33,10 @@ public class SingleAxisScroll : MonoBehaviour, IDragHandler
 
     public void OnDrag(PointerEventData eventData)
     {
-        OnScroll();
+        foreach (var touch in Input.touches)
+        {
+            if (touch.position == eventData.position)
+                OnScroll(touch);
+        }
     }
 }

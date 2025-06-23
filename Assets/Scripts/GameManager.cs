@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
-    public SaveData currentSaveData;
+    public SaveData currentSaveData = new SaveData();
     private SettingsSave currentSettingsData;
     public SettingsSave CurrentSettingsData
     {

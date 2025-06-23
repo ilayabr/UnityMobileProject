@@ -3,5 +3,7 @@ using UnityEngine;
 [System.Serializable]
 public class SaveData
 {
-    public int points;
+    public int score;
+    public float money;
+    public double timePlayed;
 }

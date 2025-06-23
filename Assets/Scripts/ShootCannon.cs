@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,6 +9,7 @@ public class ShootCanon : MonoBehaviour
     [SerializeField] Transform scopePosition;
     [SerializeField] Camera gameCamera;
     [SerializeField] float cooldown = 5f;
+    [SerializeField] TMP_Text canonText;
     private bool _isLoaded = true;
 
     public void OnButtonPress()
@@ -22,17 +24,16 @@ public class ShootCanon : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(scopePosition.position, Vector2.zero);
         if (hit.collider == null || !hit.transform.TryGetComponent(out IHitable hitObject))
         {
-            Debug.Log("Whiffed!");
+            GameplayManager.Get().ChangeMoney(0.3f, false); // deduct money for a miss
         }
         else
         {
-            Debug.Log("Hit!");
             hitObject.OnHit();
         }
 
-        Debug.Log("Reloading...");
+        canonText.text = "loading.....";
         yield return new WaitForSeconds(cooldown);
         _isLoaded = true;
-        Debug.Log("Reloaded!");
+        canonText.text = "LOADED....HE"; //will display shell type later
     }
 }

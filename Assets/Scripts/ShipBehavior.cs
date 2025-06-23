@@ -12,14 +12,18 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
 
     private ShipProperties.ShellTypes shellType;
 
-    public GameObject mainObject { get => gameObject; }
-    
+    public GameObject mainObject
+    {
+        get => gameObject;
+    }
+
     void Update()
     {
         Movement();
     }
 
-    void Movement(){
+    void Movement()
+    {
         if (!gameObject.activeInHierarchy) return;
 
         transform.Translate(Vector3.down * Time.deltaTime * speed);
@@ -50,11 +54,13 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         return false;
     }
 
-    public void SetShipProperties(ShipProperties properties){
+    public void SetShipProperties(ShipProperties properties)
+    {
         randomJammerVal = properties.jammerValues.GetRandom();
         sr.sprite = properties.sprite;
         speed = properties.speed.GetRandom();
-        shellType = (ShipProperties.ShellTypes)Random.Range(0, System.Enum.GetValues(typeof(ShipProperties.ShellTypes)).Length);
+        shellType = (ShipProperties.ShellTypes)Random.Range(0,
+            System.Enum.GetValues(typeof(ShipProperties.ShellTypes)).Length);
 
         myProperties = properties;
 
@@ -63,7 +69,6 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
 
     public void OnEnterPool()
     {
-        
     }
 
     public void OnExitPool()
@@ -82,11 +87,15 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
     {
         if (myProperties == null) return;
 
-        gameObject.name = $"{System.Enum.GetName(typeof(ShipProperties.Difficulties), myProperties.difficulty)} ship (dead)";
+        gameObject.name =
+            $"{System.Enum.GetName(typeof(ShipProperties.Difficulties), myProperties.difficulty)} ship (dead)";
     }
 
     public void OnHit()
     {
         GameplayManager.Get().shipPool.ReturnToPool(this);
+        int shipValue = (myProperties.difficulty.GetHashCode() + 1);
+        GameplayManager.Get().AddScore(shipValue * 100);
+        GameplayManager.Get().ChangeMoney(shipValue * 1.2f, true);
     }
 }
