@@ -40,8 +40,8 @@ public class PauseMenu : MonoBehaviour
         //lolol nothing yet
     }
     
-    public void OnExit()
+    public async void OnExit()
     {
-        SceneManager.LoadScene("MainMenu");
+        await GameManager.Get().TransitionToScene("MainMenu", .5f);
     }
 }

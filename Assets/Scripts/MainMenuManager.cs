@@ -6,9 +6,11 @@ public class MainMenuManager : MonoBehaviour
 {
     public List<ExtendedSaveData> foundSaves;
 
-    public void OnStartGame()
+    public async void OnStartGame()
     {
-        SceneManager.LoadScene("GameScene");
+        DataAnalyticsManager.Get().TrackData("game_start");
+
+        await GameManager.Get().TransitionToScene("GameScene", .5f);
     }
 
     public void OnLoadGame()

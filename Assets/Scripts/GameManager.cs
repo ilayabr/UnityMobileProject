@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -29,12 +32,20 @@ public class GameManager : Singleton<GameManager>
     public event UnityAction OnSettingsLoaded;
     public event UnityAction OnSavedSettingsChanged;
 
+    private GlobalFadeCanvas fadeCanvas;
+    public bool isTransitioning { get; private set; }
+
     protected override void Awake()
     {
         base.Awake();
         gameSavesPath = Application.persistentDataPath + "/GameSaves";
         currentSettingsData = new();
         currentSettingsData.OnSettingsChanged += () => OnSavedSettingsChanged?.Invoke();
+
+        DataAnalyticsManager.Get().TrackData("session_start");
+
+        var fadeCanvasObj = Resources.Load<GameObject>("GlobalFadeCanvas");
+        fadeCanvas = Instantiate(fadeCanvasObj, transform).GetComponent<GlobalFadeCanvas>();
     }
 
     public void SaveData()
@@ -190,8 +201,37 @@ public class GameManager : Singleton<GameManager>
         string json = File.ReadAllText(savePath);
 
         currentSettingsData = JsonConvert.DeserializeObject<SettingsSave>(json);
-        
+
         OnSettingsLoaded?.Invoke();
     }
-    
+
+    public async Task TransitionToScene(string sceneName, float transitionTime)
+    {
+        if (isTransitioning) return;
+        isTransitioning = true;
+        var overlay = fadeCanvas.overlay;
+
+        await TintOverTime(overlay, Color.black, transitionTime);
+
+        await SceneManager.LoadSceneAsync(sceneName);
+
+        await TintOverTime(overlay, new Color(0, 0, 0, 0), transitionTime);
+
+        isTransitioning = false;
+    }
+
+    public async Task TintOverTime(Image toTint, Color endColor, float time)
+    {
+        var startingColor = toTint.color;
+        float elapsed = 0f;
+
+        while (elapsed < time)
+        {
+            toTint.color = Color.Lerp(startingColor, endColor, elapsed / time);
+            await Task.Yield();
+            elapsed += Time.unscaledDeltaTime;
+        }
+
+        toTint.color = endColor;
+    }
 }
