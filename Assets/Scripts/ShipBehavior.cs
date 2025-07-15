@@ -97,6 +97,6 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         int shipValue = (myProperties.difficulty.GetHashCode() + 1);
         GameplayManager.Get().ChangeScore(shipValue * 100);
         GameplayManager.Get().ChangeMoney(shipValue * 1.2f, true);
-        AudioManager.Get().PlayExplosionSound();
+        AudioManager.Get().PlaySFX(myProperties.exploadSound);
     }
 }

@@ -5,10 +5,21 @@ using UnityEngine.SceneManagement;
 public class MainMenuManager : MonoBehaviour
 {
     public List<ExtendedSaveData> foundSaves;
+    [SerializeField] private AudioClip menuMusic;
+
+    void Start()
+    {
+        var source = AudioManager.Get().CreateSource("menuMusic");
+        source.clip = menuMusic;
+        source.loop = true;
+        source.Play();
+    }
 
     public async void OnStartGame()
     {
         DataAnalyticsManager.Get().TrackData("game_start");
+
+        AudioManager.Get().RemoveSource("menuMusic");
 
         await GameManager.Get().TransitionToScene("GameScene", .5f);
     }

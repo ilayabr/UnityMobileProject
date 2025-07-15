@@ -10,6 +10,7 @@ public class ShootCanon : MonoBehaviour
     [SerializeField] Camera gameCamera;
     [SerializeField] float cooldown = 5f;
     [SerializeField] TMP_Text canonText;
+    [SerializeField] AudioClip cannonShootSound;
     private bool _isLoaded = true;
 
     public void OnButtonPress()
@@ -31,7 +32,7 @@ public class ShootCanon : MonoBehaviour
             hitObject.OnHit();
         }
 
-        AudioManager.Get().PlayCannonShootSound();
+        AudioManager.Get().PlaySFX(cannonShootSound);
         canonText.text = "loading.....";
         yield return new WaitForSeconds(cooldown);
         _isLoaded = true;
