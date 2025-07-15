@@ -31,6 +31,7 @@ public class ShootCanon : MonoBehaviour
             hitObject.OnHit();
         }
 
+        AudioManager.Get().PlayCannonShootSound();
         canonText.text = "loading.....";
         yield return new WaitForSeconds(cooldown);
         _isLoaded = true;

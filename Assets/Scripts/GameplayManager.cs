@@ -21,13 +21,34 @@ public class GameplayManager : Singleton<GameplayManager>
     [SerializeField] private TMP_Text moneyText;
     [SerializeField] private TMP_Text timeText;
     private SaveData GM;
-    
+    public int Score => GM.score;
+    public float Money => GM.money;
+
     private int textDotCount;
     private TimeSpan timePlayed;
+    public TimeSpan TimePlayed{
+        get => timePlayed;
+        set
+        {
+            timePlayed = value;
+            Debug.Log($"Time played updated: {timePlayed:mm\\:ss\\.ff}");
+        }
+    }
+    
+    private int lives = 3;
+    public int Lives
+    {
+        get => lives;
+        set
+        {
+            lives = value;
+            Debug.Log($"Lives updated: {lives}");
+        }
+    }
     protected override bool DontDestroyOnLoad => false;
 
 
-    public void AddScore(int points)
+    public void ChangeScore(int points)
     {
         GM.score += points;
         textDotCount = 10 - GM.score.ToString().Length;
