@@ -20,6 +20,6 @@ MonoBehaviour:
   jammerValues:
     min: 30
     max: 60
-  exploadSound: {fileID: 8300000, guid: 8a73f8ac38a180346b3ec26f2dff0a89, type: 3}
+  exploadSound: {fileID: 8300000, guid: 51c6aff56b39f3349a7b5721dc575400, type: 3}
   sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
   difficulty: 0

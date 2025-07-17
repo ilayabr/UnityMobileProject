@@ -1,8 +1,10 @@
 using System.Collections;
+using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Image = UnityEngine.UI.Image;
 
 public class ShootCanon : MonoBehaviour
 {
@@ -11,6 +13,9 @@ public class ShootCanon : MonoBehaviour
     [SerializeField] float cooldown = 5f;
     [SerializeField] TMP_Text canonText;
     [SerializeField] AudioClip cannonShootSound;
+    [SerializeField] Image buttonImage;
+    [SerializeField] Sprite buttonUpImage;
+    [SerializeField] Sprite buttonPressedImage;
     private bool _isLoaded = true;
 
     public void OnButtonPress()
@@ -32,10 +37,14 @@ public class ShootCanon : MonoBehaviour
             hitObject.OnHit();
         }
 
+        buttonImage.sprite = buttonPressedImage;
         AudioManager.Get().PlaySFX(cannonShootSound);
         canonText.text = "loading.....";
+        canonText.color = Color.red;
         yield return new WaitForSeconds(cooldown);
         _isLoaded = true;
         canonText.text = "LOADED....HE"; //will display shell type later
+        canonText.color = Color.green;
+        buttonImage.sprite = buttonUpImage;
     }
 }
