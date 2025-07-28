@@ -12,6 +12,7 @@ public class MainMenuManager : MonoBehaviour
         var source = AudioManager.Get().CreateSource("menuMusic");
         source.clip = menuMusic;
         source.loop = true;
+        source.volume = .2f;
         source.Play();
     }
 
