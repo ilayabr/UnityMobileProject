@@ -12,7 +12,6 @@ public class SingleAxisScroll : MonoBehaviour, IDragHandler
     [SerializeField] private bool isHorizontal = true;
     [SerializeField] private bool isVertical = true;
     [SerializeField] private Sprite[] scrollSprites;
-    [SerializeField] private int framesPerPixel = 1;
 
     private Image myImage;
     private int acumulatedAnimationValue = 0;
@@ -64,10 +63,8 @@ public class SingleAxisScroll : MonoBehaviour, IDragHandler
             if (acumulatedAnimationValue % i == 0)
             {
                 myImage.sprite = scrollSprites[i];
-                Debug.Log("Supposed to change to " + scrollSprites[i]);
                 break;
             }
         }
-        Debug.Log(acumulatedAnimationValue.ToString());
     }
 }

@@ -6,7 +6,7 @@ public class ShipProperties : ScriptableObject
     public Range speed;
     public float damage = 10f;
     public float value = 100f;
-    public Range jammerValues = new Range(30f, 60f);
+    public Range jammerValues = new Range(0f, 60f);
     public AudioClip exploadSound;
 
     public Sprite sprite;

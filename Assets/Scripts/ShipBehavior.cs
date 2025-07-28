@@ -46,7 +46,7 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         if (myProperties.difficulty is ShipProperties.Difficulties.ShellOnly 
             or ShipProperties.Difficulties.Basic)
             return true; // no jammer needed
-        return randomJammerVal > jammerValue - 2.5f && randomJammerVal < jammerValue + 2.5f;
+        return randomJammerVal > jammerValue - 1f && randomJammerVal < jammerValue + 1f;
     }
 
     public void SetShipProperties(ShipProperties properties)

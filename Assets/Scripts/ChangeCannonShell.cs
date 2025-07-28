@@ -1,23 +1,24 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class ChangeCannonShell : MonoBehaviour
 {
     [SerializeField] private ShipProperties.ShellTypes myShellType = ShipProperties.ShellTypes.HE;
-    [SerializeField] private ShootCanon canonScript;
+    [FormerlySerializedAs("canonScript")] [SerializeField] private ShootCannon cannonScript;
     [SerializeField] private Image MyDisplay;
     [SerializeField] private Sprite ActiveShellSprite;
     [SerializeField] private Sprite InactiveShellSprite;
 
     private void Update()
     {
-        MyDisplay.sprite = canonScript.cannonShellType == myShellType ? ActiveShellSprite : InactiveShellSprite;
+        MyDisplay.sprite = cannonScript.cannonShellType == myShellType ? ActiveShellSprite : InactiveShellSprite;
     }
 
     public void OnButtonDown()
     {
-        canonScript.cannonShellType = myShellType;
-        canonScript.UpdateText();
+        cannonScript.cannonShellType = myShellType;
+        cannonScript.UpdateText();
     }
 }

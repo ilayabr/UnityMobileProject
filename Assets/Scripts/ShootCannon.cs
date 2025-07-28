@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Image = UnityEngine.UI.Image;
 
-public class ShootCanon : MonoBehaviour
+public class ShootCannon : MonoBehaviour
 {
     [SerializeField] private Transform scopePosition;
     [SerializeField] private Camera gameCamera;
