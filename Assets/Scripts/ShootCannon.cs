@@ -8,14 +8,17 @@ using Image = UnityEngine.UI.Image;
 
 public class ShootCanon : MonoBehaviour
 {
-    [SerializeField] Transform scopePosition;
-    [SerializeField] Camera gameCamera;
-    [SerializeField] float cooldown = 5f;
-    [SerializeField] TMP_Text canonText;
-    [SerializeField] AudioClip cannonShootSound;
-    [SerializeField] Image buttonImage;
-    [SerializeField] Sprite buttonUpImage;
-    [SerializeField] Sprite buttonPressedImage;
+    [SerializeField] private Transform scopePosition;
+    [SerializeField] private Camera gameCamera;
+    [SerializeField] private float cooldown = 5f;
+    [SerializeField] private TMP_Text canonText;
+    [SerializeField] private AudioClip cannonShootSound;
+    [SerializeField] private Image buttonImage;
+    [SerializeField] private Sprite buttonUpImage;
+    [SerializeField] private Sprite buttonPressedImage;
+
+    public ShipProperties.ShellTypes cannonShellType = ShipProperties.ShellTypes.HE;
+    public float cannonJammerValue = 0f;
     private bool _isLoaded = true;
 
     public void OnButtonPress()
@@ -28,23 +31,39 @@ public class ShootCanon : MonoBehaviour
         if (!_isLoaded) yield break;
         _isLoaded = false;
         RaycastHit2D hit = Physics2D.Raycast(scopePosition.position, Vector2.zero);
-        if (hit.collider == null || !hit.transform.TryGetComponent(out IHitable hitObject))
+        if (hit.collider == null || !hit.transform.TryGetComponent(out ShipBehavior hitObject))
         {
             GameplayManager.Get().ChangeMoney(0.3f, false); // deduct money for a miss
         }
         else
         {
-            hitObject.OnHit();
+            if (hitObject.IsArtileryCorrect(cannonShellType) &&
+                hitObject.IsJammerSet(cannonJammerValue))
+                hitObject.OnHit();
+            else
+                GameplayManager.Get().ChangeMoney(0.3f, false); // deduct money for a miss
         }
 
         buttonImage.sprite = buttonPressedImage;
         AudioManager.Get().PlaySFX(cannonShootSound);
-        canonText.text = "loading.....";
-        canonText.color = Color.red;
+        UpdateText();
         yield return new WaitForSeconds(cooldown);
         _isLoaded = true;
-        canonText.text = "LOADED....HE"; //will display shell type later
-        canonText.color = Color.green;
+        UpdateText();
         buttonImage.sprite = buttonUpImage;
+    }
+
+    public void UpdateText()
+    {
+        if (_isLoaded)
+        {
+            canonText.text = "LOADED...." + cannonShellType;
+            canonText.color = Color.green;
+        }
+        else
+        {
+            canonText.text = "loading.....";
+            canonText.color = Color.red;
+        }
     }
 }

@@ -10,7 +10,7 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
 
     private float speed = 1;
 
-    private ShipProperties.ShellTypes shellType;
+    public ShipProperties.ShellTypes shellType;
 
     public GameObject mainObject
     {
@@ -35,23 +35,18 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
 
     public bool IsArtileryCorrect(ShipProperties.ShellTypes artileryUsed)
     {
-        if (myProperties.difficulty == ShipProperties.Difficulties.JammerOnly ||
-            myProperties.difficulty == ShipProperties.Difficulties.Basic)
-            return true;
-        if (shellType == artileryUsed)
-            return true;
-        return false;
+        if (myProperties.difficulty is ShipProperties.Difficulties.JammerOnly 
+            or ShipProperties.Difficulties.Basic)
+            return true; // no artilery needed
+        return shellType == artileryUsed;
     }
 
     public bool IsJammerSet(float jammerValue)
     {
-        if (myProperties.difficulty == ShipProperties.Difficulties.ShellOnly ||
-            myProperties.difficulty == ShipProperties.Difficulties.Basic)
-            return true;
-        if (randomJammerVal > jammerValue - 2.5f && randomJammerVal < jammerValue + 2.5f)
-            return true;
-
-        return false;
+        if (myProperties.difficulty is ShipProperties.Difficulties.ShellOnly 
+            or ShipProperties.Difficulties.Basic)
+            return true; // no jammer needed
+        return randomJammerVal > jammerValue - 2.5f && randomJammerVal < jammerValue + 2.5f;
     }
 
     public void SetShipProperties(ShipProperties properties)
