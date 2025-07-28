@@ -11,16 +11,15 @@ public class SingleAxisScroll : MonoBehaviour, IDragHandler
     [SerializeField] private float sensitivity = 1f; //:D
     [SerializeField] private bool isHorizontal = true;
     [SerializeField] private bool isVertical = true;
-    [SerializeField] private Animator animator;
+    [SerializeField] private Sprite[] scrollSprites;
+    [SerializeField] private int framesPerPixel = 1;
 
-    
-    //idk what is going on with the animator, this is the closest I could get to it working
-    private void Update()
+    private Image myImage;
+    private int acumulatedAnimationValue = 0;
+
+    private void Start()
     {
-        if (animator != null && Input.touchCount == 0)
-        {
-            animator.SetBool("isScrolling", false);
-        }
+        myImage = gameObject.GetComponent<UnityEngine.UI.Image>();
     }
 
     public void OnScroll(Touch touch)
@@ -34,19 +33,14 @@ public class SingleAxisScroll : MonoBehaviour, IDragHandler
                     isHorizontal ? touch.deltaPosition.x : 0f,
                     isVertical ? touch.deltaPosition.y : 0f
                 );
+                acumulatedAnimationValue += (int)(fixedDelta.x + fixedDelta.y);
                 onScrollEvent.Invoke(sensitivity * fixedDelta);
-                
-                if (animator != null)
-                    animator.SetBool("isScrolling", true);
                 break;
             case TouchPhase.Ended:
             case TouchPhase.Stationary:
             case TouchPhase.Canceled:
             default:
                 onScrollEvent.Invoke(Vector2.zero);
-                
-                if (animator != null)
-                    animator.SetBool("isScrolling", false);
                 break;
         }
     }
@@ -56,9 +50,24 @@ public class SingleAxisScroll : MonoBehaviour, IDragHandler
         foreach (var touch in Input.touches)
         {
             if (touch.position == eventData.position)
+            {
                 OnScroll(touch);
-            else if (animator != null)
-                animator.SetBool("isScrolling", false);
+                UpdateAnimationFrame();
+            }
         }
+    }
+
+    private void UpdateAnimationFrame()
+    {
+        for (int i = scrollSprites.Length - 1; i >= 0; i--)
+        {
+            if (acumulatedAnimationValue % i == 0)
+            {
+                myImage.sprite = scrollSprites[i];
+                Debug.Log("Supposed to change to " + scrollSprites[i]);
+                break;
+            }
+        }
+        Debug.Log(acumulatedAnimationValue.ToString());
     }
 }
