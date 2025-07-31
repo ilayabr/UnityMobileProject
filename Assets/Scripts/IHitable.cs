@@ -4,5 +4,5 @@
 /// </summary>
 public interface IHitable
 {
-    void OnHit();
+    bool OnHit(ShellTypes sheelUSed, float jammerVal);
 }

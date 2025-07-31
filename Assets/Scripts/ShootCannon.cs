@@ -17,7 +17,7 @@ public class ShootCannon : MonoBehaviour
     [SerializeField] private Sprite buttonUpImage;
     [SerializeField] private Sprite buttonPressedImage;
 
-    public ShipProperties.ShellTypes cannonShellType = ShipProperties.ShellTypes.HE;
+    public ShellTypes cannonShellType = ShellTypes.HE;
     public float cannonJammerValue = 0f;
     private bool _isLoaded = true;
 
@@ -37,10 +37,7 @@ public class ShootCannon : MonoBehaviour
         }
         else
         {
-            if (hitObject.IsArtileryCorrect(cannonShellType) &&
-                hitObject.IsJammerSet(cannonJammerValue))
-                hitObject.OnHit();
-            else
+            if (!hitObject.OnHit(cannonShellType, cannonJammerValue))
                 GameplayManager.Get().ChangeMoney(0.3f, false); // deduct money for a miss
         }
 

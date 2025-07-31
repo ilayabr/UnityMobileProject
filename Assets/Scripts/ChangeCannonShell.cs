@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class ChangeCannonShell : MonoBehaviour
 {
-    [SerializeField] private ShipProperties.ShellTypes myShellType = ShipProperties.ShellTypes.HE;
+    [SerializeField] private ShellTypes myShellType = ShellTypes.HE;
     [FormerlySerializedAs("canonScript")] [SerializeField] private ShootCannon cannonScript;
     [SerializeField] private Image MyDisplay;
     [SerializeField] private Sprite ActiveShellSprite;

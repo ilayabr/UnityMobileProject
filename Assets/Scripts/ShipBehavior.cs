@@ -7,10 +7,11 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
     [SerializeField] private SpriteRenderer sr;
 
     private float randomJammerVal;
+    private float randomJammerOffset;
 
     private float speed = 1;
 
-    public ShipProperties.ShellTypes shellType;
+    public ShellTypes shellType;
 
     public GameObject mainObject
     {
@@ -33,7 +34,7 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         }
     }
 
-    public bool IsArtileryCorrect(ShipProperties.ShellTypes artileryUsed)
+    public bool IsArtileryCorrect(ShellTypes artileryUsed)
     {
         if (myProperties.difficulty is ShipProperties.Difficulties.JammerOnly 
             or ShipProperties.Difficulties.Basic)
@@ -46,16 +47,17 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         if (myProperties.difficulty is ShipProperties.Difficulties.ShellOnly 
             or ShipProperties.Difficulties.Basic)
             return true; // no jammer needed
-        return randomJammerVal > jammerValue - 1f && randomJammerVal < jammerValue + 1f;
+        return randomJammerVal > jammerValue - randomJammerOffset && randomJammerVal < jammerValue + randomJammerOffset;
     }
 
     public void SetShipProperties(ShipProperties properties)
     {
         randomJammerVal = properties.jammerValues.GetRandom();
+        randomJammerOffset = properties.jammerOffset.GetRandom();
         sr.sprite = properties.sprite;
         speed = properties.speed.GetRandom();
-        shellType = (ShipProperties.ShellTypes)Random.Range(0,
-            System.Enum.GetValues(typeof(ShipProperties.ShellTypes)).Length);
+        shellType = (ShellTypes)Random.Range(0,
+            System.Enum.GetValues(typeof(ShellTypes)).Length);
 
         myProperties = properties;
 
@@ -86,12 +88,15 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
             $"{System.Enum.GetName(typeof(ShipProperties.Difficulties), myProperties.difficulty)} ship (dead)";
     }
 
-    public void OnHit()
+    public bool OnHit(ShellTypes sheelUSed, float jammerVal)
     {
+        if (!IsArtileryCorrect(sheelUSed) || !IsJammerSet(jammerVal)) return false;
+
         GameplayManager.Get().shipPool.ReturnToPool(this);
-        int shipValue = (myProperties.difficulty.GetHashCode() + 1);
-        GameplayManager.Get().ChangeScore(shipValue * 100);
-        GameplayManager.Get().ChangeMoney(shipValue * 1.2f, true);
+        GameplayManager.Get().ChangeScore(myProperties.scoreWorth * 100);
+        GameplayManager.Get().ChangeMoney(myProperties.value * 1.2f, true);
         AudioManager.Get().PlaySFX(myProperties.exploadSound);
+
+        return true;
     }
 }

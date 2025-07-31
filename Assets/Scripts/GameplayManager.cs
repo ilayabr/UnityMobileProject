@@ -6,12 +6,17 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
+public enum ShellTypes
+{
+    HE,
+    AP,
+    AT
+}
+
 public class GameplayManager : Singleton<GameplayManager>
 {
-    [SerializeField] private ShipProperties basicShipProperties;
-    [SerializeField] private ShipProperties ShellShipProperties;
-    [SerializeField] private ShipProperties JammerShipProperties;
-    [SerializeField] private ShipProperties ShellAndJammerShipProperties;
+    [SerializeField] private WeightedList<ShipProperties> possibleShips;
+    [SerializeField] private float shipSpawnSpeed;
 
     [FormerlySerializedAs("objectPool")] public ObjectPool shipPool;
     [SerializeField] private GameObject shipPrefab;
@@ -26,7 +31,8 @@ public class GameplayManager : Singleton<GameplayManager>
 
     private int textDotCount;
     private TimeSpan timePlayed;
-    public TimeSpan TimePlayed{
+    public TimeSpan TimePlayed
+    {
         get => timePlayed;
         set
         {
@@ -34,7 +40,7 @@ public class GameplayManager : Singleton<GameplayManager>
             Debug.Log($"Time played updated: {timePlayed:mm\\:ss\\.ff}");
         }
     }
-    
+
     private int lives = 3;
     public int Lives
     {
@@ -82,13 +88,12 @@ public class GameplayManager : Singleton<GameplayManager>
     private void Start()
     {
         GM = GameManager.Get().currentSaveData;
-        shipPool.InitializePool(shipPrefab, 20);
+        shipPool.InitializePool(shipPrefab, 3);
         StartCoroutine(SpawnShips());
     }
 
     void Update()
     {
-        ClickHandler();
         timePlayed += TimeSpan.FromSeconds(Time.deltaTime);
         timeText.text = $"{timePlayed:mm\\:ss\\.ff}";
         GM.timePlayed = timePlayed.TotalSeconds;
@@ -98,7 +103,7 @@ public class GameplayManager : Singleton<GameplayManager>
     {
         while (true)
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(shipSpawnSpeed);
             SpawnShip();
         }
     }
@@ -108,26 +113,7 @@ public class GameplayManager : Singleton<GameplayManager>
         GameObject ship = shipPool.ActivateFromPool();
         if (!ship) return;
         ShipBehavior shipBehavior = ship.GetComponent<ShipBehavior>();
-        shipBehavior.SetShipProperties(basicShipProperties);
-    }
-
-    /// <summary>
-    /// Creates a raycast when clicking the left mouse button and if an object is found and has the 'IHitable' interface it will call its 'OnHit()' method
-    /// </summary>
-    void ClickHandler()
-    {
-        if (!Input.GetMouseButtonDown(0) || pauseMenu.IsPaused) return;
-
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        ContactFilter2D filter = new ContactFilter2D().NoFilter();
-        List<RaycastHit2D> rayHits = new();
-
-        if (Physics2D.Raycast(mouseWorldPos, Vector2.zero, filter, rayHits) == 0) return;
-
-        if (!rayHits[0].transform.TryGetComponent(out IHitable hitObject)) return;
-
-        hitObject.OnHit();
+        shipBehavior.SetShipProperties(possibleShips.ChooseRandom());
     }
 
     public void PauseGame()
