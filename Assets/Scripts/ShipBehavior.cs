@@ -1,17 +1,21 @@
+using TMPro;
 using UnityEngine;
 
 public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
 {
-    private ShipProperties myProperties;
+    public ShipProperties MyProperties { get; private set; }
 
     [SerializeField] private SpriteRenderer sr;
+    [SerializeField] private TextMeshPro nameText;
 
-    private float randomJammerVal;
-    private float randomJammerOffset;
+    public float RandomJammerVal { get; private set; }
+    public float RandomJammerOffset { get; private set; }
 
     private float speed = 1;
 
     public ShellTypes shellType;
+
+    public string shipNameID;
 
     public GameObject mainObject
     {
@@ -36,7 +40,7 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
 
     public bool IsArtileryCorrect(ShellTypes artileryUsed)
     {
-        if (myProperties.difficulty is ShipProperties.Difficulties.JammerOnly 
+        if (MyProperties.difficulty is ShipProperties.Difficulties.JammerOnly 
             or ShipProperties.Difficulties.Basic)
             return true; // no artilery needed
         return shellType == artileryUsed;
@@ -44,24 +48,27 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
 
     public bool IsJammerSet(float jammerValue)
     {
-        if (myProperties.difficulty is ShipProperties.Difficulties.ShellOnly 
+        if (MyProperties.difficulty is ShipProperties.Difficulties.ShellOnly 
             or ShipProperties.Difficulties.Basic)
             return true; // no jammer needed
-        return randomJammerVal > jammerValue - randomJammerOffset && randomJammerVal < jammerValue + randomJammerOffset;
+        return RandomJammerVal > jammerValue - RandomJammerOffset && RandomJammerVal < jammerValue + RandomJammerOffset;
     }
 
     public void SetShipProperties(ShipProperties properties)
     {
-        randomJammerVal = properties.jammerValues.GetRandom();
-        randomJammerOffset = properties.jammerOffset.GetRandom();
+        RandomJammerVal = properties.jammerValues.GetRandom();
+        RandomJammerOffset = properties.jammerOffset.GetRandom();
         sr.sprite = properties.sprite;
         speed = properties.speed.GetRandom();
         shellType = (ShellTypes)Random.Range(0,
             System.Enum.GetValues(typeof(ShellTypes)).Length);
 
-        myProperties = properties;
+        GameplayManager.Get().CreateNameIDForShip(this);
 
-        gameObject.name = $"{System.Enum.GetName(typeof(ShipProperties.Difficulties), myProperties.difficulty)} ship";
+        MyProperties = properties;
+
+        nameText.text = shipNameID;
+        gameObject.name = $"{MyProperties.name + nameText.text} ship";
     }
 
     public void OnEnterPool()
@@ -75,17 +82,17 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         pos.y = 5;
         transform.position = pos;
 
-        if (myProperties == null) return;
+        if (MyProperties == null) return;
 
-        gameObject.name = $"{System.Enum.GetName(typeof(ShipProperties.Difficulties), myProperties.difficulty)} ship";
+        gameObject.name = $"{System.Enum.GetName(typeof(ShipProperties.Difficulties), MyProperties.difficulty)} ship";
     }
 
     public void OnReturnedToPool()
     {
-        if (myProperties == null) return;
+        if (MyProperties == null) return;
 
         gameObject.name =
-            $"{System.Enum.GetName(typeof(ShipProperties.Difficulties), myProperties.difficulty)} ship (dead)";
+            $"{System.Enum.GetName(typeof(ShipProperties.Difficulties), MyProperties.difficulty)} ship (dead)";
     }
 
     public bool OnHit(ShellTypes sheelUSed, float jammerVal)
@@ -93,9 +100,9 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         if (!IsArtileryCorrect(sheelUSed) || !IsJammerSet(jammerVal)) return false;
 
         GameplayManager.Get().shipPool.ReturnToPool(this);
-        GameplayManager.Get().ChangeScore(myProperties.scoreWorth * 100);
-        GameplayManager.Get().ChangeMoney(myProperties.value * 1.2f, true);
-        AudioManager.Get().PlaySFX(myProperties.exploadSound);
+        GameplayManager.Get().ChangeScore(MyProperties.scoreWorth * 100);
+        GameplayManager.Get().ChangeMoney(MyProperties.value * 1.2f, true);
+        AudioManager.Get().PlaySFX(MyProperties.exploadSound);
 
         return true;
     }

@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ShipProperties", menuName = "Scriptable Objects/ShipProperties")]
 public class ShipProperties : ScriptableObject
 {
+    public string shipName;
     public Range speed;
     public int scoreWorth = 1;
     public float damage = 10f;

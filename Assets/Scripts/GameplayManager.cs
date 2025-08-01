@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -53,6 +54,12 @@ public class GameplayManager : Singleton<GameplayManager>
     }
     protected override bool DontDestroyOnLoad => false;
 
+    private List<ShipBehavior> allShipsAlive => shipPool.GetLivingPoolables().Select(e => e.mainObject.GetComponent<ShipBehavior>()).ToList();
+
+    private Dictionary<string, GameObject> existingShipInfoThings = new();
+    [SerializeField] private GameObject shipInfoPrefab;
+    [SerializeField] private Transform shipInfoParent;
+
 
     public void ChangeScore(int points)
     {
@@ -89,6 +96,7 @@ public class GameplayManager : Singleton<GameplayManager>
     {
         GM = GameManager.Get().currentSaveData;
         shipPool.InitializePool(shipPrefab, 3);
+        shipPool.OnObjectDeactivated += OnShipDisabled;
         StartCoroutine(SpawnShips());
     }
 
@@ -114,10 +122,57 @@ public class GameplayManager : Singleton<GameplayManager>
         if (!ship) return;
         ShipBehavior shipBehavior = ship.GetComponent<ShipBehavior>();
         shipBehavior.SetShipProperties(possibleShips.ChooseRandom());
+
+        var infoPoint = Instantiate(shipInfoPrefab, shipInfoParent);
+
+        infoPoint.GetComponent<ShipInfoCell>().Setup(shipBehavior);
+
+        existingShipInfoThings.Add(shipBehavior.shipNameID, infoPoint);
     }
 
     public void PauseGame()
     {
         pauseMenu.SetPauseState(true);
+    }
+
+    public void CreateNameIDForShip(ShipBehavior ship)
+    {
+        while (true)
+        {
+            ship.shipNameID = UnityEngine.Random.Range(0, 100).ToString();
+
+            int amountOfShipsWithTheSameName = 0;
+
+            foreach (var livingShip in allShipsAlive)
+            {
+                if (livingShip == ship) continue;
+                string nameID = livingShip.shipNameID;
+
+                if (!char.IsDigit(livingShip.shipNameID[livingShip.shipNameID.Length - 1]))
+                    nameID = livingShip.shipNameID.Substring(0, livingShip.shipNameID.Length - 1);
+
+                if (nameID.Equals(ship.shipNameID))
+                    amountOfShipsWithTheSameName++;
+            }
+
+            if (amountOfShipsWithTheSameName == 0)
+                break;
+            else if (amountOfShipsWithTheSameName < 3)
+            {
+                var extraLetter = (char)(65 + amountOfShipsWithTheSameName);
+
+                ship.shipNameID += extraLetter;
+
+                break;
+            }
+        }
+    }
+
+    public void OnShipDisabled(IPoolable obj)
+    {
+        var id = obj.mainObject.GetComponent<ShipBehavior>().shipNameID;
+        if (!existingShipInfoThings.ContainsKey(id)) return;
+        Destroy(existingShipInfoThings[id]);
+        existingShipInfoThings.Remove(id);
     }
 }

@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Serialization;
+using System.Linq;
+using System;
 
 /// <summary>
 /// a generic pool class that can contain any IPoolable
@@ -8,6 +10,8 @@ using UnityEngine.Serialization;
 public class ObjectPool : MonoBehaviour
 {
     private readonly List<IPoolable> pool = new();
+
+    public event Action<IPoolable> OnObjectDeactivated;
 
     /// <summary>
     /// <para>Creates a number of instances of a prefab within this pool.</para> 
@@ -21,7 +25,8 @@ public class ObjectPool : MonoBehaviour
         {
             GameObject obj = Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
 
-            if (!obj.TryGetComponent(out IPoolable poolable)){
+            if (!obj.TryGetComponent(out IPoolable poolable))
+            {
                 Destroy(obj);
                 Debug.LogWarning($"Attempt to initialize pool '{gameObject.name}' failed! given prefabs ('{prefab.name}') root object does not contain a component of type 'IPoolable'!");
                 return;
@@ -61,5 +66,9 @@ public class ObjectPool : MonoBehaviour
 
         returningObj.mainObject.SetActive(false);
         returningObj.OnReturnedToPool();
+
+        OnObjectDeactivated?.Invoke(returningObj);
     }
+
+    public List<IPoolable> GetLivingPoolables() => pool.Where(e => e.mainObject.activeSelf).ToList();
 }
