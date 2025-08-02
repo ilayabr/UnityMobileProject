@@ -22,6 +22,11 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         get => gameObject;
     }
 
+    void Start()
+    {
+        
+    }
+
     void Update()
     {
         Movement();

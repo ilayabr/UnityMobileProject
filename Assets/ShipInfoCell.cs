@@ -12,6 +12,6 @@ public class ShipInfoCell : MonoBehaviour
         if (ship.MyProperties.difficulty == ShipProperties.Difficulties.ShellAndJammer || ship.MyProperties.difficulty == ShipProperties.Difficulties.ShellOnly)
             text.text += $"\n Ammo-{Enum.GetName(typeof(ShellTypes), ship.shellType)}........";
         if (ship.MyProperties.difficulty == ShipProperties.Difficulties.ShellAndJammer || ship.MyProperties.difficulty == ShipProperties.Difficulties.JammerOnly)
-        text.text += $"\n Jammer:{ship.RandomJammerVal}.....\n JRange:~{ship.RandomJammerOffset:.2}";
+        text.text += $"\n Jammer:{(int)ship.RandomJammerVal}.....\n JRange:~{(int)ship.RandomJammerOffset}";
     }
 }
