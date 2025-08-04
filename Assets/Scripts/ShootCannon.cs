@@ -1,9 +1,6 @@
 using System.Collections;
-using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Image = UnityEngine.UI.Image;
 
 public class ShootCannon : MonoBehaviour

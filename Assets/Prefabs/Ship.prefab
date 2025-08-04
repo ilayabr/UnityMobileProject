@@ -313,6 +313,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sr: {fileID: 2517029227927935430}
   nameText: {fileID: 5494917276601884054}
+  particles: {fileID: 5174064336931134472}
   shellType: 0
   shipNameID: 
 --- !u!61 &832996920650016268

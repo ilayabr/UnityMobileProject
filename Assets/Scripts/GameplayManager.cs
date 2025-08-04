@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -27,36 +26,11 @@ public class GameplayManager : Singleton<GameplayManager>
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text moneyText;
     [SerializeField] private TMP_Text timeText;
-    [SerializeField] private TMP_Text livesText;
-    [SerializeField] private GameObject gameOverPanel;
-    [SerializeField] private AudioClip gameOverSfx;
-    [SerializeField] private TMP_Text gameOverScore;
-    [SerializeField] private TMP_Text gameOverMoney;
-    [SerializeField] private TMP_Text gameOverTime;
     private SaveData GM;
-    private int textDotCount;
     public int Score => GM.score;
     public float Money => GM.money;
-    
-    public int Lives => GM.lives;
-    public void ChangeLives(int amount)
-    {
-        GM.lives += amount;
-        textDotCount = 10 - GM.lives.ToString().Length;
 
-        string dots = "";
-        for (int i = 0; i < textDotCount; i++)
-        {
-            dots += ".";
-        }
-        livesText.text = $"LIV{dots}{GM.lives}";
-
-        if (GM.lives <= 0)
-        {
-            GameOver();
-        }
-    }
-
+    private int textDotCount;
     private TimeSpan timePlayed;
     public TimeSpan TimePlayed
     {
@@ -65,6 +39,17 @@ public class GameplayManager : Singleton<GameplayManager>
         {
             timePlayed = value;
             Debug.Log($"Time played updated: {timePlayed:mm\\:ss\\.ff}");
+        }
+    }
+
+    private int lives = 3;
+    public int Lives
+    {
+        get => lives;
+        set
+        {
+            lives = value;
+            Debug.Log($"Lives updated: {lives}");
         }
     }
     protected override bool DontDestroyOnLoad => false;
@@ -88,6 +73,7 @@ public class GameplayManager : Singleton<GameplayManager>
         }
 
         scoreText.text = $"pts{dots}{GM.score}";
+        Debug.Log($"Score updated: {GM.score}");
     }
 
     public void ChangeMoney(float amount, bool positive)
@@ -102,13 +88,13 @@ public class GameplayManager : Singleton<GameplayManager>
         }
 
         moneyText.text = $"sal{dots}{GM.money:F1}$";
+        Debug.Log($"Money updated: {GM.money}");
     }
 
 
     private void Start()
     {
         GM = GameManager.Get().currentSaveData;
-        GM.lives = 3;
         shipPool.InitializePool(shipPrefab, 3);
         shipPool.OnObjectDeactivated += OnShipDisabled;
         StartCoroutine(SpawnShips());
@@ -188,21 +174,5 @@ public class GameplayManager : Singleton<GameplayManager>
         if (!existingShipInfoThings.ContainsKey(id)) return;
         Destroy(existingShipInfoThings[id]);
         existingShipInfoThings.Remove(id);
-    }
-    
-    public void GameOver()
-    {
-        AudioManager.Get().PlaySFX(gameOverSfx).volume = 0.5f;
-        Time.timeScale = 0;
-        gameOverScore.text = $"score: {GM.score}";
-        gameOverMoney.text = $"money: {GM.money}$";
-        gameOverTime.text = $"your shift lasted {timePlayed:mm} hours and {timePlayed:ss} minutes";
-        gameOverPanel.SetActive(true);
-    }
-    
-    public void ReturnToMainMenu()
-    {
-        SceneManager.LoadScene("MainMenu");
-        Time.timeScale = 1;
     }
 }

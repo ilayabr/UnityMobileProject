@@ -7,6 +7,7 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
 
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] private TextMeshPro nameText;
+    [SerializeField] private ParticleSystem particles;
 
     public float RandomJammerVal { get; private set; }
     public float RandomJammerOffset { get; private set; }
@@ -22,9 +23,16 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         get => gameObject;
     }
 
+    void Start()
+    {
+        particles.gameObject.transform.SetParent(transform.parent);
+    }
+
     void Update()
     {
         Movement();
+
+        particles.transform.position = transform.position;
     }
 
     void Movement()

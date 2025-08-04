@@ -38,7 +38,7 @@ public class DebugOptions : MonoBehaviour
                 gameplayManager.TimePlayed = TimeSpan.Zero;
                 break;
             default:
-                Debug.Log("Unhandled button type: " + thisButtonType);
+                //Debug.Log("Unhandled button type: " + thisButtonType);
                 break;
         }
     }

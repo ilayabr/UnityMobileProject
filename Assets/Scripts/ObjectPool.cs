@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Serialization;
 using System.Linq;
 using System;
 
@@ -28,7 +27,9 @@ public class ObjectPool : MonoBehaviour
             if (!obj.TryGetComponent(out IPoolable poolable))
             {
                 Destroy(obj);
+                #if UNITY_EDITOR
                 Debug.LogWarning($"Attempt to initialize pool '{gameObject.name}' failed! given prefabs ('{prefab.name}') root object does not contain a component of type 'IPoolable'!");
+                #endif
                 return;
             }
 
