@@ -12,17 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52e8f3853e7e3c84d989f8b0596699d3, type: 3}
   m_Name: JammerShip
   m_EditorClassIdentifier: 
+  shipName: 
   speed:
     min: 0.1
-    max: 0.3
-  scoreWorth:
-    min: 1
-    max: 1
-  damage: 3
+    max: 0.2
+  scoreWorth: 2
   value: 200
   jammerValues:
     min: 30
     max: 60
+  jammerOffset:
+    min: 1
+    max: 10
   exploadSound: {fileID: 8300000, guid: 51c6aff56b39f3349a7b5721dc575400, type: 3}
-  sprite: {fileID: 21300000, guid: 4b00831b206f44f44b926ab322b0081c, type: 3}
+  sprite: {fileID: -3315927683879923564, guid: 917c97e11e8982f4bbea6af31b4ef6fa, type: 3}
   difficulty: 2

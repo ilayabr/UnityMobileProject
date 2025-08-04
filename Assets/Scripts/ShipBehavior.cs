@@ -22,11 +22,6 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         get => gameObject;
     }
 
-    void Start()
-    {
-        
-    }
-
     void Update()
     {
         Movement();
@@ -39,6 +34,9 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
         transform.Translate(Vector3.down * Time.deltaTime * speed);
         if (transform.position.y < -5f)
         {
+            GameplayManager.Get().ChangeLives(-1);
+            Handheld.Vibrate();
+            AudioManager.Get().PlaySFX(MyProperties.exploadSound);
             GameplayManager.Get().shipPool.ReturnToPool(this);
         }
     }
@@ -98,15 +96,24 @@ public class ShipBehavior : MonoBehaviour, IPoolable, IHitable
 
         gameObject.name =
             $"{System.Enum.GetName(typeof(ShipProperties.Difficulties), MyProperties.difficulty)} ship (dead)";
+        
+        shellType = Random.Range(0,
+            System.Enum.GetValues(typeof(ShellTypes)).Length) switch
+        {
+            0 => ShellTypes.HE,
+            1 => ShellTypes.AP,
+            2 => ShellTypes.AT,
+            _ => ShellTypes.HE // default to HE if something goes wrong
+        };
     }
 
     public bool OnHit(ShellTypes sheelUSed, float jammerVal)
     {
         if (!IsArtileryCorrect(sheelUSed) || !IsJammerSet(jammerVal)) return false;
 
-        GameplayManager.Get().shipPool.ReturnToPool(this);
-        GameplayManager.Get().ChangeScore(MyProperties.scoreWorth * 100);
+        GameplayManager.Get().ChangeScore(MyProperties.scoreWorth * (int)transform.position.y);
         GameplayManager.Get().ChangeMoney(MyProperties.value * 1.2f, true);
+        GameplayManager.Get().shipPool.ReturnToPool(this);
         AudioManager.Get().PlaySFX(MyProperties.exploadSound);
 
         return true;

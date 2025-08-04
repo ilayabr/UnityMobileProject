@@ -22,6 +22,7 @@ public class MainMenuManager : MonoBehaviour
 
         AudioManager.Get().RemoveSource("menuMusic");
 
+        Handheld.Vibrate();
         await GameManager.Get().TransitionToScene("GameScene", .5f);
     }
 

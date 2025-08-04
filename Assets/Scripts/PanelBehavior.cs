@@ -9,6 +9,7 @@ public class PanelBehavior : MonoBehaviour
     [SerializeField] private Vector2 activePosition;
     [SerializeField] private Vector2 inactivePosition;
     [SerializeField] private AnimationCurve moveCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [SerializeField] private AudioClip buttonSound;
 
     void Start()
     {
@@ -18,6 +19,7 @@ public class PanelBehavior : MonoBehaviour
 
     public void OnButtonPress()
     {
+        AudioManager.Get().PlaySFX(buttonSound);
         isActive = !isActive;
         Vector2 targetPosition = isActive ? activePosition : inactivePosition;
         StartCoroutine(MovePanel(targetPosition));

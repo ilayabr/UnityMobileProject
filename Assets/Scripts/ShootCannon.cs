@@ -13,6 +13,7 @@ public class ShootCannon : MonoBehaviour
     [SerializeField] private float cooldown = 5f;
     [SerializeField] private TMP_Text canonText;
     [SerializeField] private AudioClip cannonShootSound;
+    [SerializeField] private AudioClip changeShellSound;
     [SerializeField] private Image buttonImage;
     [SerializeField] private Sprite buttonUpImage;
     [SerializeField] private Sprite buttonPressedImage;
@@ -29,7 +30,7 @@ public class ShootCannon : MonoBehaviour
     public IEnumerator Shoot()
     {
         if (!_isLoaded) yield break;
-        _isLoaded = false;
+        StartCoroutine(Reload());
         RaycastHit2D hit = Physics2D.Raycast(scopePosition.position, Vector2.zero);
         if (hit.collider == null || !hit.transform.TryGetComponent(out ShipBehavior hitObject))
         {
@@ -40,27 +41,23 @@ public class ShootCannon : MonoBehaviour
             if (!hitObject.OnHit(cannonShellType, cannonJammerValue))
                 GameplayManager.Get().ChangeMoney(0.3f, false); // deduct money for a miss
         }
-
-        buttonImage.sprite = buttonPressedImage;
         AudioManager.Get().PlaySFX(cannonShootSound);
-        UpdateText();
-        yield return new WaitForSeconds(cooldown);
-        _isLoaded = true;
-        UpdateText();
-        buttonImage.sprite = buttonUpImage;
+        Handheld.Vibrate();
     }
 
-    public void UpdateText()
+    public IEnumerator Reload()
     {
-        if (_isLoaded)
-        {
-            canonText.text = "LOADED...." + cannonShellType;
-            canonText.color = Color.green;
-        }
-        else
-        {
-            canonText.text = "loading.....";
-            canonText.color = Color.red;
-        }
+        if (!_isLoaded) yield break;
+        _isLoaded = false;
+        canonText.text = "loading.....";
+        canonText.color = Color.red;
+        buttonImage.sprite = buttonPressedImage;
+        yield return new WaitForSeconds(cooldown - 1.2f);
+        AudioManager.Get().PlaySFX(changeShellSound).volume = 0.5f;
+        yield return new WaitForSeconds(1.2f);
+        canonText.text = "LOADED...." + cannonShellType;
+        canonText.color = Color.green;
+        buttonImage.sprite = buttonUpImage;
+        _isLoaded = true;
     }
 }

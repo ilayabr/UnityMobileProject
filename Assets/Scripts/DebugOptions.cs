@@ -26,7 +26,7 @@ public class DebugOptions : MonoBehaviour
                 gameplayManager.ChangeMoney(1000, true);
                 break;
             case ButtonType.Lives:
-                gameplayManager.Lives++; //lives not yet implemented!
+                gameplayManager.ChangeLives(3 - gameplayManager.Lives); //lives not yet implemented!
                 break;
             case ButtonType.TimePlayed:
                 gameplayManager.TimePlayed += TimeSpan.FromMinutes(10);
@@ -34,7 +34,7 @@ public class DebugOptions : MonoBehaviour
             case ButtonType.ResetGame:
                 gameplayManager.ChangeScore(-gameplayManager.Score);
                 gameplayManager.ChangeMoney(gameplayManager.Money, false);
-                gameplayManager.Lives = 3;
+                gameplayManager.ChangeLives(3 - gameplayManager.Lives);
                 gameplayManager.TimePlayed = TimeSpan.Zero;
                 break;
             default:

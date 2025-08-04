@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SineWaveChildren : MonoBehaviour
+public class DotsDisplay : MonoBehaviour
 {
     [SerializeField] private int Amount = 10;
     [SerializeField] private GameObject prefab;

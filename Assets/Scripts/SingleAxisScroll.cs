@@ -58,13 +58,6 @@ public class SingleAxisScroll : MonoBehaviour, IDragHandler
 
     private void UpdateAnimationFrame()
     {
-        for (int i = scrollSprites.Length - 1; i >= 0; i--)
-        {
-            if (acumulatedAnimationValue % i == 0)
-            {
-                myImage.sprite = scrollSprites[i];
-                break;
-            }
-        }
+        myImage.sprite = scrollSprites[Mathf.Abs(acumulatedAnimationValue % scrollSprites.Length)];
     }
 }
