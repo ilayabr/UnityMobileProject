@@ -5,7 +5,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 public enum ShellTypes
 {
@@ -38,7 +37,6 @@ public class GameplayManager : Singleton<GameplayManager>
         set
         {
             timePlayed = value;
-            Debug.Log($"Time played updated: {timePlayed:mm\\:ss\\.ff}");
         }
     }
 
@@ -49,7 +47,6 @@ public class GameplayManager : Singleton<GameplayManager>
         set
         {
             lives = value;
-            Debug.Log($"Lives updated: {lives}");
         }
     }
     protected override bool DontDestroyOnLoad => false;
@@ -73,7 +70,6 @@ public class GameplayManager : Singleton<GameplayManager>
         }
 
         scoreText.text = $"pts{dots}{GM.score}";
-        Debug.Log($"Score updated: {GM.score}");
     }
 
     public void ChangeMoney(float amount, bool positive)
@@ -88,7 +84,6 @@ public class GameplayManager : Singleton<GameplayManager>
         }
 
         moneyText.text = $"sal{dots}{GM.money:F1}$";
-        Debug.Log($"Money updated: {GM.money}");
     }
 
 

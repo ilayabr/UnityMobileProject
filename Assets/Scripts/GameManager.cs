@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Analytics;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;

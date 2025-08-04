@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class DebugBehavior : MonoBehaviour
@@ -19,12 +18,14 @@ public class DebugBehavior : MonoBehaviour
 
     public void OnButtonPress()
     {
-        consecutiveTaps++;
-        StartCoroutine(ResetTapCounter());
-        if (consecutiveTaps < 5) return;
-        Debug.Log("Debug mode activated!");
-        debugMenu.SetActive(true);
-        gameplayManager.PauseGame();
+        if (Debug.isDebugBuild)
+        {
+            consecutiveTaps++;
+            StartCoroutine(ResetTapCounter());
+            if (consecutiveTaps < 5) return;
+            debugMenu.SetActive(true);
+            gameplayManager.PauseGame();
+        }
     }
 
     private IEnumerator ResetTapCounter()
